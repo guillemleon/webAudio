@@ -25,11 +25,17 @@ export default class WebAudio {
         this.primaryGainControl = this.audioContext.createGain();
         this.recording = false;
         this.recordedNotes = new Array();
+        this.simonSays = new Array();
+        this.simonResponds = new Array();
+        this.simonSaid = false;
+        this.simonResponded = false;
+        this.startGame = false;
+        this.stopGame = false;
     }
 
-    start() {        
+    start() {
         const channelData = this.buffer.getChannelData(0);
-    
+
         for(let i = 0; i < this.buffer.length; i++) {
             channelData[i] = Math.random() * 2 - 1;
         }
@@ -48,11 +54,11 @@ export default class WebAudio {
         const primaryGainControl = this.primaryGainControl;
         primaryGainControl.gain.setValueAtTime(0.05, 0);
         primaryGainControl.connect(this.audioContext.destination);
-    
+
         const button = document.createElement('button');
         button.innerText = "Soroll";
         button.className = 'exampleButton';
-    
+
         button.addEventListener('click', () => {
             const whiteNoiseSource = this.audioContext.createBufferSource();
             whiteNoiseSource.buffer = this.buffer;
@@ -68,29 +74,29 @@ export default class WebAudio {
         snareFilter.type = "highpass";
         snareFilter.frequency.value = 1500;
         snareFilter.connect(primaryGainControl);
-    
+
         const snareButton = document.createElement('button');
         snareButton.innerText = "Snare";
         snareButton.className = 'exampleButton';
-    
+
         snareButton.addEventListener('click', () => {
             const whiteNoiseSource = this.audioContext.createBufferSource();
             whiteNoiseSource.buffer = this.buffer;
             whiteNoiseSource.connect(snareFilter);
-    
+
             const whiteNoiseGain = this.audioContext.createGain();
             whiteNoiseGain.gain.setValueAtTime(1, this.audioContext.currentTime);
             whiteNoiseGain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.2);
             whiteNoiseSource.connect(whiteNoiseGain);
             whiteNoiseGain.connect(snareFilter);
-    
+
             whiteNoiseSource.start();
-            whiteNoiseSource.stop(this.audioContext.currentTime + 0.2); 
-    
+            whiteNoiseSource.stop(this.audioContext.currentTime + 0.2);
+
             const snareOscilator = this.audioContext.createOscillator();
             snareOscilator.type = "triangle";
             snareOscilator.frequency.setValueAtTime(250, this.audioContext.currentTime);
-    
+
             const oscillatorGain = this.audioContext.createGain();
             oscillatorGain.gain.setValueAtTime(1, this.audioContext.currentTime);
             oscillatorGain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
@@ -107,18 +113,18 @@ export default class WebAudio {
         const kickButton = document.createElement('button');
         kickButton.innerText = "Kick";
         kickButton.className = 'exampleButton';
-    
+
         kickButton.addEventListener('click', () => {
             const kickOscillator = this.audioContext.createOscillator();
-    
+
             kickOscillator.frequency.setValueAtTime(266.1, 0);
-            
+
             kickOscillator.frequency.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.5);
-    
+
             const kickGain = this.audioContext.createGain();
             kickGain.gain.setValueAtTime(1, 0);
             kickGain.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.5);
-    
+
             kickOscillator.connect(primaryGainControl);
             kickGain.connect(primaryGainControl);
             kickOscillator.start();
@@ -135,9 +141,12 @@ export default class WebAudio {
         document.getElementById('examples').appendChild(recordButton);
 
         recordButton.addEventListener('click', () => {
-            this.recording = true;
-            this.removeFromLocalStorage('recordedNotes');
-            recordButton.className = this.recording ? 'recordingButton' : 'exampleButton';
+            this.removeFromLocalStorage('recordedNotes').then(() => {
+                this.recording = true;
+                this.recordedNotes = [];
+                recordButton.className = this.recording ? 'recordingButton' : 'exampleButton';
+            });
+
         })
 
     }
@@ -157,8 +166,6 @@ export default class WebAudio {
                 this.saveToLocalStorage('recordedNotes', this.recordedNotes);
             }
         })
-        
-        
 
     }
 
@@ -181,11 +188,11 @@ export default class WebAudio {
                     const noteOscillator = this.audioContext.createOscillator();
                     noteOscillator.type = 'square';
                     noteOscillator.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
-        
+
                     noteOscillator.connect(primaryGainControl);
                     noteOscillator.start();
                     noteOscillator.stop(this.audioContext.currentTime + 0.5);
-    
+
                     function sleep(milliseconds) {
                         const date = Date.now();
                         let currentDate = null;
@@ -199,7 +206,7 @@ export default class WebAudio {
             }
 
             pNotes();
-              
+
 
         })
     }
@@ -211,12 +218,12 @@ export default class WebAudio {
             const noteButton = document.createElement('button');
             noteButton.innerHTML = name;
             noteButton.className = 'noteButton';
-    
+
             noteButton.addEventListener('click', () => {
                 const noteOscillator = this.audioContext.createOscillator();
                 noteOscillator.type = 'square';
                 noteOscillator.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
-    
+
                 noteOscillator.connect(primaryGainControl);
                 noteOscillator.start();
                 noteOscillator.stop(this.audioContext.currentTime + 0.5);
@@ -227,9 +234,9 @@ export default class WebAudio {
                 }
 
             })
-    
+
             document.getElementById('notes').appendChild(noteButton);
-    
+
         })
     }
 
@@ -243,7 +250,7 @@ export default class WebAudio {
 
     async getFromLocalStorage(itemName) {
         const recNotes = await localStorage.getItem(itemName);
-        const parsedNotes = JSON.parse(recNotes); 
+        const parsedNotes = JSON.parse(recNotes);
         return parsedNotes;
     }
 }
