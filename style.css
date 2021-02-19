@@ -1,0 +1,105 @@
+* {
+    margin: 0;
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    background: #1D976C;
+    background: -webkit-linear-gradient(to right, #6ebd8b, #157c58); 
+    background: linear-gradient(to right,  #6ebd8b, #157c58);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.titleContainer {
+    width: 90%;
+    height: 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.title {
+    color: #FFF;
+    font-weight: 900;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.content {
+    height: 60%;
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.examples {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.notes {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.noteButton {
+    width: 40px;
+    height: 100%;
+    margin: 0 10px 0 10px;
+    border: none;
+    outline: none;
+    transition: 0.5s;
+    border-radius: 15px;
+}
+
+.noteButton:hover {
+    background: linear-gradient(to top, #f55f4b, #e29300);
+    transform: scale(1.1);
+    transition: 0.5s;
+}
+
+.noteButton:active {
+    transform: scale(1);
+    transition: 0.2s;
+}
+
+.exampleButton {
+    width: 140px;
+    height: 40%;
+    margin: 0 10px 0 10px;
+    border: none;
+    outline: none;
+    transition: 0.5s;
+    border-radius: 15px;
+}
+
+.recordingButton {
+    width: 140px;
+    height: 40%;
+    margin: 0 10px 0 10px;
+    border: none;
+    outline: none;
+    transition: 0.5s;
+    border-radius: 15px;
+    background: linear-gradient(to top, #f55f4b, #f55f4b);
+}
+
+.exampleButton:hover {
+    background: linear-gradient(to top, #f55f4b, #e29300);
+    transform: scale(1.1);
+    transition: 0.5s;
+}
+
+.exampleButton:active {
+    transform: scale(1);
+    transition: 0.2s;
+}
